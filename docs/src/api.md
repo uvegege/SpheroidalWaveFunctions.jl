@@ -1,51 +1,7 @@
 # API Reference
 
-## Angular Functions
-
-### Prolate Angular Functions
-
-```@docs
-prolate_angular_leg
-prolate_angular_ps
-```
-
-### Oblate Angular Functions
-
-```@docs
-oblate_angular_leg
-oblate_angular_ps
-```
-
-## Radial Functions
-
-### Prolate Radial Functions
-
-```@docs
-prolate_radial1
-prolate_radial2
-```
-
-### Oblate Radial Functions
-
-```@docs
-oblate_radial1
-oblate_radial2
-```
-
-## Characteristic Values
-
-### Single Eigenvalue
-
-```@docs
-prolate_cv
-oblate_cv
-```
-
-### Eigenvalue Sequences
-
-```@docs
-prolate_cv_seq
-oblate_cv_seq
+```@autodocs
+Modules = [SpheroidalWaveFunctions]
 ```
 
 ## Notes
