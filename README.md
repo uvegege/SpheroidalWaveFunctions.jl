@@ -94,6 +94,10 @@ The numerical methods used include:
 
 Contributions are welcome and appreciated! Whether you find a bug, have an idea for improvement, or want to add new functionality, please feel free to:
 
+- Open an issue to report bugs or discuss enhancements
+- Submit a pull request with improvements or fixes
+- Share your use cases and feedback
+
 Any help in expanding test coverage, improving documentation, or optimizing performance is especially appreciated.
 
 ## Related Packages
