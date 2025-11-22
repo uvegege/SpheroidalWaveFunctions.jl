@@ -37,9 +37,9 @@ jobs:
         run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using TouchstoneParser
-            DocMeta.setdocmeta!(TouchstoneParser, :DocTestSetup, :(using TouchstoneParser); recursive=true)
-            doctest(TouchstoneParser)'
+            using SpheroidalWaveFunctions
+            DocMeta.setdocmeta!(SpheroidalWaveFunctions, :DocTestSetup, :(using SpheroidalWaveFunctions); recursive=true)
+            doctest(SpheroidalWaveFunctions)'
       - name: Generate and deploy documentation
         run: julia --project=docs docs/make.jl
         env:

@@ -1,19 +1,20 @@
 name = "SpheroidalWaveFunctions"
-version = "0.1.0"
 uuid = "02c85723-9d49-4e80-ba06-d2f5c9d5147a"
+version = "0.1.0"
 
 [deps]
 Bessels = "0e736298-9ec6-45e8-9647-e4fc86a2fe38"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [compat]
 Bessels = "0.2.8"
 julia = "1.10"
 
 [extras]
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 CondaPkg = "992eb4ea-22a4-4c89-a5bb-47a3300528ab"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 PythonCall = "6099a3de-0909-46bc-b1f4-468b9a2dfc0d"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test", "Documenter"]
