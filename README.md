@@ -4,7 +4,9 @@ A Julia implementation for computing angular and radial spheroidal wave function
 
 ## Background
 
-This package was created to support the development of [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl), where spheroidal wave functions are needed for electromagnetic mode calculations. Since no native Julia implementation was available at the time, this package provides the necessary functionality based on standard references and established numerical methods.
+This package was created to support the development of [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl), where spheroidal wave functions are needed for electromagnetic mode calculations. Since no native Julia implementation was available at the time (or at least none could be found after searching through various channels), this package provides the necessary functionality based on standard references and established numerical methods.
+
+The goal is not to provide cutting-edge or highly optimized methods, but simply to offer the minimum set of functionalities needed for practical use in Julia.
 
 ## Features
 
