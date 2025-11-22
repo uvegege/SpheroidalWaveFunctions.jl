@@ -4,13 +4,13 @@ A Julia implementation for computing angular and radial spheroidal wave function
 
 ## Background
 
-This package was created to support the development of [AnalyticEMModes.jl](https://github.com/your-repo/AnalyticEMModes.jl), where spheroidal wave functions are needed for electromagnetic mode calculations. Since no native Julia implementation was available at the time, this package provides the necessary functionality based on standard references and established numerical methods.
+This package was created to support the development of [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl), where spheroidal wave functions are needed for electromagnetic mode calculations. Since no native Julia implementation was available at the time, this package provides the necessary functionality based on standard references and established numerical methods.
 
 ## Features
 
 - **Angular spheroidal wave functions**: Both Legendre expansion and power series methods
 - **Radial spheroidal wave functions**: First and second kind
-- **Characteristic values (eigenvalues)**: Individual and sequential computation
+- **Characteristic values (eigenvalues)**: Individual and sequence computation
 - **Prolate and oblate cases**: Support for both coordinate systems
 - **Pure Julia implementation**: No external dependencies for core computations
 
@@ -18,7 +18,7 @@ This package was created to support the development of [AnalyticEMModes.jl](http
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/your-username/SpheroidalWaveFunctions.jl")
+Pkg.add(url="https://github.com/uvegege/SpheroidalWaveFunctions.jl")
 ```
 
 ## Quick Start
@@ -73,25 +73,28 @@ The implementation follows standard definitions and algorithms from:
 
 - **NIST Digital Library of Mathematical Functions (DLMF)**: Chapter 30, "Spheroidal Wave Functions"
 - **Abramowitz & Stegun**: *Handbook of Mathematical Functions*, Chapter 21
+- **Zhang, S., & Jin, J.** (1996): *Computation of Special Functions*, Wiley (Fortran implementation used as reference by SciPy)
 - **Falloon, P. E., Abbott, P. C., & Wang, J. B.** (2003): "Theory and computation of spheroidal wavefunctions", *Journal of Physics A: Mathematical and General*, 36(20), 5477
 - **Li, L. W., Kang, X. K., & Leong, M. S.** (2002): *Spheroidal Wave Functions in Electromagnetic Theory*, Wiley
 - **Adelman, R., Gumerov, N. A., & Duraiswami, R.** (2014): "Software for Computing the Spheroidal Wave Functions Using Arbitrary Precision Arithmetic", arXiv:1408.0074
 
 The numerical methods used include:
-- Eigenvalue computation via tridiagonal matrix methods
+- Eigenvalue computation via symmetric tridiagonal matrix methods
 - Newton-Raphson refinement with continued fractions
 - Mixed forward-backward recursion for expansion coefficients
 
+
 ## Limitations and Known Issues
 
-- This is a straightforward implementation prioritizing correctness over performance
-- Not optimized for very large values of parameters or high precision requirements
-- For production applications requiring extreme accuracy or performance, consider specialized libraries
 - Limited testing coverage compared to mature packages like SciPy's `special` module
+- May not handle all edge cases or extreme parameter values
+- Numerical stability for very large parameters has not been extensively tested
 
 ## Contributing
 
-Contributions, bug reports, and suggestions are welcome. Please open an issue or submit a pull request.
+Contributions are welcome and appreciated! Whether you find a bug, have an idea for improvement, or want to add new functionality, please feel free to:
+
+Any help in expanding test coverage, improving documentation, or optimizing performance is especially appreciated.
 
 ## Related Packages
 
@@ -102,4 +105,8 @@ Contributions, bug reports, and suggestions are welcome. Please open an issue or
 ## License
 
 MIT License - see LICENSE file for details
+
+## Acknowledgments
+
+Some implementation details (such as matrix sizes and initial values) were informed by examining SciPy's routines and Zhang & Jin's Fortran code. The development benefited from examining SciPy's spheroidal wave function routines and Zhang & Jin's Fortran code for guidance on implementation details and numerical validation.
 
