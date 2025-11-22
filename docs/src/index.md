@@ -6,7 +6,9 @@ A Julia implementation for computing angular and radial spheroidal wave function
 
 Spheroidal wave functions are solutions to the Helmholtz equation in spheroidal coordinates. They appear in electromagnetic and acoustic scattering problems, among other applications.
 
-This package was developed to support [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl) and provides a native Julia implementation based on standard mathematical references.
+This package was developed to support [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl), where these functions were needed for electromagnetic mode calculations. Since no native Julia implementation was available at the time (or at least none could be found), this package provides the necessary functionality based on standard mathematical references and established numerical methods.
+
+The goal is not to provide cutting-edge or highly optimized algorithms, but simply to offer a working set of functionalities for practical use in Julia.
 
 
 ## Overview
@@ -106,9 +108,11 @@ The implementation follows standard definitions and algorithms from:
 - **Li, L. W., Kang, X. K., & Leong, M. S.** (2002): *Spheroidal Wave Functions in Electromagnetic Theory*, Wiley
 - **Adelman, R., Gumerov, N. A., & Duraiswami, R.** (2014): "Software for Computing the Spheroidal Wave Functions Using Arbitrary Precision Arithmetic", arXiv:1408.0074
 
-The numerical methods used include:
+The numerical methods implemented are standard approaches including:
 - Eigenvalue computation via symmetric tridiagonal matrix methods
 - Newton-Raphson refinement with continued fractions
 - Mixed forward-backward recursion for expansion coefficients
+
+Some implementation details (such as matrix sizes and initial values) were informed by examining SciPy's routines and Zhang & Jin's Fortran code for guidance on numerical stability and validation.
 
 
