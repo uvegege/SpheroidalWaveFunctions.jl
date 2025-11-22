@@ -1,5 +1,5 @@
 """
-    compute_dr2_mix(m, n, c, λ, max_terms=25 + div(n - m, 2) + round(Int, abs(c))) -> Vector{Float64}
+    compute_dr2_mix(m, n, c, λ, max_terms=25 + div(n - m, 2) + round(Int, abs(c)))
 
 Compute the expansion coefficients dᵣ for the spheroidal wave function using a mixed method.
 
@@ -90,7 +90,7 @@ end
 
 
 """
-    compute_normalization_sum(dr, r_values, m, is_even) -> Float64
+    compute_normalization_sum(dr, r_values, m, is_even)
 
 Compute the normalization sum for the expansion coefficients.
 
@@ -126,7 +126,7 @@ function compute_normalization_sum(dr, r_values, m, is_even)
 end
 
 """
-    compute_normalization_constant(m, n, is_even) -> Float64
+    compute_normalization_constant(m, n, is_even)
 
 Compute the normalization constant based on the parity of (n-m).
 
@@ -148,7 +148,7 @@ end
 
 
 """
-    pochhammer(a, k) -> Float64
+    pochhammer(a, k)
 
 Compute the Pochhammer symbol (rising factorial) (a)ₖ = a(a+1)(a+2)⋯(a+k-1).
 
@@ -168,7 +168,7 @@ function pochhammer(a, k)
 end
 
 """
-    compute_c2k(m, n, dr) -> Vector{Float64}
+    compute_c2k(m, n, dr)
 
 Compute the power series expansion coefficients c₂ₖ from the Legendre expansion coefficients dᵣ.
 

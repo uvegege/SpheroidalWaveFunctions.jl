@@ -1,5 +1,5 @@
 """
-    spheroidal_ang_1(m, n, dr, x) -> (S, dS)
+    spheroidal_ang_1(m, n, dr, x)
 
 Compute the angular spheroidal wave function using Legendre function expansion (method 1).
 
@@ -40,7 +40,7 @@ end
 
 
 """
-    spheroidal_ang_2(m, n, c2k, x) -> (S, dS)
+    spheroidal_ang_2(m, n, c2k, x)
 
 Compute the angular spheroidal wave function using power series expansion (method 2).
 

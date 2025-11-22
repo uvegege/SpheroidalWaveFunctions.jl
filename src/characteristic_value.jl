@@ -1,6 +1,6 @@
 
 """
-    build_tridiagonal(m, n, c, N) -> Tridiagonal
+    build_tridiagonal(m, n, c, N)
 
 Construct the tridiagonal matrix for the three-term recurrence relation of spheroidal wave functions.
 
@@ -38,7 +38,7 @@ function build_tridiagonal(m, n, c, N)
 end
 
 """
-    symmetrize_tridiagonal(A) -> SymTridiagonal
+    symmetrize_tridiagonal(A)
 
 Convert a tridiagonal matrix to a symmetric tridiagonal form for eigenvalue computation.
 
@@ -59,7 +59,7 @@ function symmetrize_tridiagonal(A)
 end
 
 """
-    cv_matrix(m, n, c, N=10 + div(n - m, 2) + round(Int, abs(c))) -> λ
+    cv_matrix(m, n, c, N=10 + div(n - m, 2) + round(Int, abs(c)))
 
 Compute the characteristic value using the matrix eigenvalue method.
 
@@ -82,7 +82,7 @@ function cv_matrix(m, n, c, N = 10 + div(n - m, 2) + round(Int, abs(c)))
 end
 
 """
-    cv_matrix_seq(m, n, c, N=10 + div(n - m, 2) + round(Int, abs(c))) -> Vector{λ}
+    cv_matrix_seq(m, n, c, N=10 + div(n - m, 2) + round(Int, abs(c)))
 
 Compute a sequence of characteristic values using the matrix eigenvalue method.
 
@@ -105,7 +105,7 @@ function cv_matrix_seq(m, n, c, N = 10 + div(n - m, 2) + round(Int, abs(c)))
 end
 
 """
-    Nᵣᵐ1(m, n, c, λ, Nmax) -> Number
+    Nᵣᵐ1(m, n, c, λ, Nmax)
 
 Compute the backward continued fraction for the characteristic value equation.
 
@@ -131,7 +131,7 @@ function Nᵣᵐ1(m, n, c, λ, Nmax)
 end
 
 """
-    Nᵣᵐ2(m, n, c, λ, Nmax) -> Number
+    Nᵣᵐ2(m, n, c, λ, Nmax)
 
 Compute the forward continued fraction for the characteristic value equation.
 
@@ -157,7 +157,7 @@ end
 
 
 """
-    Nᵣᵐ1_prime(m, n, c, λ, Nmax) -> Number
+    Nᵣᵐ1_prime(m, n, c, λ, Nmax)
 
 Compute the derivative of the backward continued fraction with respect to λ.
 
@@ -192,7 +192,7 @@ function Nᵣᵐ1_prime(m, n, c, λ, Nmax)
 end
 
 """
-    Nᵣᵐ2_prime(m, n, c, λ, Nmax) -> Number
+    Nᵣᵐ2_prime(m, n, c, λ, Nmax)
 
 Compute the derivative of the forward continued fraction with respect to λ.
 
@@ -225,7 +225,7 @@ function Nᵣᵐ2_prime(m, n, c, λ, Nmax)
 end
 
 """
-    find_eigenvalue(m, n, c; tol=1e-12, max_iter=25, num_terms=100) -> λ
+    find_eigenvalue(m, n, c; tol=1e-12, max_iter=25, num_terms=100)
 
 Compute the characteristic value using Newton-Raphson iteration with continued fractions.
 
@@ -257,7 +257,7 @@ function find_eigenvalue(m, n, c; tol = 1e-12, max_iter=25, num_terms=100)
 end
 
 """
-    find_eigenvalue_guess(m, n, c, λ_guess; tol=1e-12, max_iter=25, num_terms=40) -> λ
+    find_eigenvalue_guess(m, n, c, λ_guess; tol=1e-12, max_iter=25, num_terms=40)
 
 Refine a characteristic value using Newton-Raphson iteration with a given initial guess.
 
@@ -293,7 +293,7 @@ function find_eigenvalue_guess(m, n, c, λ_guess; tol = 1e-12, max_iter=25, num_
 end
 
 """
-    find_eigenvalue_seq(m, n, c; max_iter=20, num_terms=30) -> Vector{λ}
+    find_eigenvalue_seq(m, n, c; max_iter=20, num_terms=30)
 
 Compute a sequence of characteristic values for modes m through n.
 
@@ -318,7 +318,7 @@ end
 
 
 """
-    ps_λ(m, n, c) -> λ
+    ps_λ(m, n, c)
 
 Compute the characteristic value using power series expansion for small c.
 
@@ -360,7 +360,7 @@ end
 
 
 """
-    asymp_λ_pro(m, n, c) -> λ
+    asymp_λ_pro(m, n, c)
 
 Compute the characteristic value using asymptotic expansion for large c (oblate case).
 

@@ -1,5 +1,5 @@
 """
-    Fmn(m, n, dr) -> Float64
+    Fmn(m, n, dr)
 
 Compute the normalization factor Fₘₙ for radial spheroidal wave functions.
 
@@ -30,7 +30,7 @@ function Fmn(m, n, dr)
 end
 
 """
-    spheroidal_rad_1(m, n, c, dr, ξ) -> (R, dR)
+    spheroidal_rad_1(m, n, c, dr, ξ)
 
 Compute the radial spheroidal wave function of the first kind using spherical Bessel functions.
 
@@ -79,7 +79,7 @@ function spheroidal_rad_1(m, n, c, dr, ξ)
 end
 
 """
-    spheroidal_rad_2(m, n, c, dr, ξ) -> (R, dR)
+    spheroidal_rad_2(m, n, c, dr, ξ)
 
 Compute the radial spheroidal wave function of the second kind using spherical Neumann functions.
 
@@ -128,7 +128,7 @@ function spheroidal_rad_2(m, n, c, dr, ξ)
 end
 
 """
-    kmn1(m, n, c) -> Float64
+    kmn1(m, n, c)
 
 Compute the normalization constant kₘₙ for the first radial function.
 

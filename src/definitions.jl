@@ -1,7 +1,7 @@
 """
-    prolate_angular_leg(m, n, c, x) -> (S, dS)
-    prolate_angular_leg(m, n, c, λ, x) -> (S, dS)
-    prolate_angular_leg(m, n, c, λ, dr, x) -> (S, dS)
+    prolate_angular_leg(m, n, c, x)
+    prolate_angular_leg(m, n, c, λ, x)
+    prolate_angular_leg(m, n, c, λ, dr, x)
 
 Compute the prolate angular spheroidal wave function and its derivative using the Legendre expansion.
 
@@ -38,9 +38,9 @@ function prolate_angular_leg(m, n, c, λ, dr, x)
 end
 
 """
-    oblate_angular_leg(m, n, c, x) -> (S, dS)
-    oblate_angular_leg(m, n, c, λ, x) -> (S, dS)
-    oblate_angular_leg(m, n, c, λ, c2k, x) -> (S, dS)
+    oblate_angular_leg(m, n, c, x)
+    oblate_angular_leg(m, n, c, λ, x)
+    oblate_angular_leg(m, n, c, λ, c2k, x)
 
 Compute the oblate angular spheroidal wave function and its derivative using the Legendre expansion.
 
@@ -67,9 +67,9 @@ oblate_angular_leg(m, n, c, λ, c2k, x) = prolate_angular_leg(m, n, im*c, λ, c2
 
 
 """
-    prolate_angular_ps(m, n, c, x) -> (S, dS)
-    prolate_angular_ps(m, n, c, λ, x) -> (S, dS)
-    prolate_angular_ps(m, n, c, λ, c2k, x) -> (S, dS)
+    prolate_angular_ps(m, n, c, x)
+    prolate_angular_ps(m, n, c, λ, x)
+    prolate_angular_ps(m, n, c, λ, c2k, x)
 
 Compute the prolate angular spheroidal wave function and its derivative using the power series expansion.
 
@@ -108,9 +108,9 @@ function prolate_angular_ps(m, n, c, λ, c2k, x)
 end
 
 """
-    oblate_angular_ps(m, n, c, x) -> (S, dS)
-    oblate_angular_ps(m, n, c, λ, x) -> (S, dS)
-    oblate_angular_ps(m, n, c, λ, c2k, x) -> (S, dS)
+    oblate_angular_ps(m, n, c, x)
+    oblate_angular_ps(m, n, c, λ, x)
+    oblate_angular_ps(m, n, c, λ, c2k, x)
 
 Compute the oblate angular spheroidal wave function and its derivative using the power series expansion.
 
@@ -137,9 +137,9 @@ oblate_angular_ps(m, n, c, λ, c2k, x) = prolate_angular_ps(m, n, im*c, λ, c2k,
 
 
 """
-    prolate_radial1(m, n, c, ξ) -> (R, dR)
-    prolate_radial1(m, n, c, λ, ξ) -> (R, dR)
-    prolate_radial1(m, n, c, λ, dr, ξ) -> (R, dR)
+    prolate_radial1(m, n, c, ξ)
+    prolate_radial1(m, n, c, λ, ξ)
+    prolate_radial1(m, n, c, λ, dr, ξ)
 
 Compute the prolate radial spheroidal wave function of the first kind and its derivative.
 
@@ -178,9 +178,9 @@ function prolate_radial1(m, n, c, λ, dr, ξ)
 end
 
 """
-    prolate_radial2(m, n, c, ξ) -> (R, dR)
-    prolate_radial2(m, n, c, λ, ξ) -> (R, dR)
-    prolate_radial2(m, n, c, λ, dr, ξ) -> (R, dR)
+    prolate_radial2(m, n, c, ξ)
+    prolate_radial2(m, n, c, λ, ξ)
+    prolate_radial2(m, n, c, λ, dr, ξ)
 
 Compute the prolate radial spheroidal wave function of the second kind and its derivative.
 
@@ -221,9 +221,9 @@ end
 
 
 """
-    oblate_radial1(m, n, c, ξ) -> (R, dR)
-    oblate_radial1(m, n, c, λ, ξ) -> (R, dR)
-    oblate_radial1(m, n, c, λ, dr, ξ) -> (R, dR)
+    oblate_radial1(m, n, c, ξ)
+    oblate_radial1(m, n, c, λ, ξ)
+    oblate_radial1(m, n, c, λ, dr, ξ)
 
 Compute the oblate radial spheroidal wave function of the first kind and its derivative.
 
@@ -262,9 +262,9 @@ function oblate_radial1(m, n, c, λ, dr, ξ)
 end
 
 """
-    oblate_radial2(m, n, c, ξ) -> (R, dR)
-    oblate_radial2(m, n, c, λ, ξ) -> (R, dR)
-    oblate_radial2(m, n, c, λ, dr, ξ) -> (R, dR)
+    oblate_radial2(m, n, c, ξ)
+    oblate_radial2(m, n, c, λ, ξ)
+    oblate_radial2(m, n, c, λ, dr, ξ)
 
 Compute the oblate radial spheroidal wave function of the second kind and its derivative.
 
@@ -304,7 +304,7 @@ end
 
 
 """
-    prolate_cv(m, n, c) -> λ
+    prolate_cv(m, n, c)
 
 Compute the characteristic value (eigenvalue) for prolate spheroidal wave functions.
 
@@ -329,7 +329,7 @@ function prolate_cv(m, n, c)
 end
 
 """
-    oblate_cv(m, n, c) -> λ
+    oblate_cv(m, n, c)
 
 Compute the characteristic value (eigenvalue) for oblate spheroidal wave functions.
 
@@ -354,7 +354,7 @@ function oblate_cv(m, n, c)
 end
 
 """
-    prolate_cv_seq(m, n, c) -> Vector{λ}
+    prolate_cv_seq(m, n, c)
 
 Compute a sequence of characteristic values for prolate spheroidal wave functions.
 
@@ -378,7 +378,7 @@ function prolate_cv_seq(m, n, c)
 end
 
 """
-    oblate_cv_seq(m, n, c) -> Vector{λ}
+    oblate_cv_seq(m, n, c)
 
 Compute a sequence of characteristic values for oblate spheroidal wave functions.
 

@@ -1,5 +1,5 @@
 """
-    assoc_legendre_Pm(m, N, x) -> (P, dP)
+    assoc_legendre_Pm(m, N, x)
 
 Compute associated Legendre functions Pₙᵐ(x) and their derivatives for n = m, m+1, ..., N.
 
@@ -104,7 +104,7 @@ end
 
 
 """
-    expr_1(n) -> Float64
+    expr_1(n)
 
 Compute (2n)!/n! = (n+1)(n+2)⋯(2n).
 
@@ -123,7 +123,7 @@ function expr_1(n)
 end
 
 """
-    expr_2(n) -> Float64
+    expr_2(n)
 
 Compute (2n+2)!/(2(n+1)!).
 
@@ -138,7 +138,7 @@ function expr_2(n)
 end
 
 """
-    expr_3(m, n) -> Float64
+    expr_3(m, n)
 
 Compute the normalization factor for even (n-m) case.
 
@@ -166,7 +166,7 @@ end
 
 
 """
-    expr_4(m, n) -> Float64
+    expr_4(m, n)
 
 Compute the normalization factor for odd (n-m) case.
 
@@ -193,7 +193,7 @@ function expr_4(m, n)
 end
 
 """
-    αᵣ(m, r, γ²) -> Number
+    αᵣ(m, r, γ²)
 
 Compute the upper diagonal element of the three-term recurrence relation.
 
@@ -208,7 +208,7 @@ Compute the upper diagonal element of the three-term recurrence relation.
 @inline αᵣ(m, r, γ²) = γ² * ((2 * m + r) + 2) * ((2 * m + r) + 1) / (((2 * m + 2 * r) + 5) * ((2 * m + 2 * r) + 3))
 
 """
-    βᵣ(m, r, γ²) -> Number
+    βᵣ(m, r, γ²)
 
 Compute the diagonal element of the three-term recurrence relation.
 
@@ -223,7 +223,7 @@ Compute the diagonal element of the three-term recurrence relation.
 @inline βᵣ(m, r, γ²) = (m + r) * ((m + r) + 1) + γ² * (2 * (m + r) * ((m + r) + 1) - 2 * m^2 - 1) / (((2 * m + 2 * r) - 1) * ((2 * m + 2 * r) + 3))
 
 """
-    γᵣ(m, r, γ²) -> Number
+    γᵣ(m, r, γ²)
 
 Compute the lower diagonal element of the three-term recurrence relation.
 
@@ -238,14 +238,14 @@ Compute the lower diagonal element of the three-term recurrence relation.
 @inline γᵣ(m, r, γ²) = γ² * (r * (r - 1)) / (((2 * m + 2 * r) - 3) * ((2 * m + 2 * r) - 1))
 
 """
-    γᵐ(m, r, γ²) -> Number
+    γᵐ(m, r, γ²)
 
 Alias for βᵣ used in the continued fraction formulation.
 """
 @inline γᵐ(m, r, γ²) = βᵣ(m, r, γ²)
 
 """
-    βᵐ(m, r, γ²) -> Number
+    βᵐ(m, r, γ²)
 
 Compute the product γᵣ(m, r, γ²) * αᵣ(m, r-2, γ²) used in the continued fraction.
 """
@@ -253,7 +253,7 @@ Compute the product γᵣ(m, r, γ²) * αᵣ(m, r-2, γ²) used in the continue
 
 
 """
-    sphericalbesselj_derivative(ν, z) -> Number
+    sphericalbesselj_derivative(ν, z)
 
 Compute the derivative of the spherical Bessel function jᵥ(z) with respect to z.
 
@@ -269,7 +269,7 @@ Uses the recurrence relation: jᵥ'(z) = jᵥ₋₁(z) - (ν+1)/z jᵥ(z).
 @inline sphericalbesselj_derivative(ν, z) = sphericalbesselj(ν-1, z) - (ν+1)/z * sphericalbesselj(ν, z)
 
 """
-    sphericalbessely_derivative(ν, z) -> Number
+    sphericalbessely_derivative(ν, z)
 
 Compute the derivative of the spherical Neumann function yᵥ(z) with respect to z.
 
@@ -288,7 +288,7 @@ Uses the recurrence relation: yᵥ'(z) = yᵥ₋₁(z) - (ν+1)/z yᵥ(z).
 
 
 """
-    Nmn(m, n, dr) -> Float64
+    Nmn(m, n, dr)
 
 Compute the normalization constant Nₘₙ(c) for spheroidal wave functions.
 
