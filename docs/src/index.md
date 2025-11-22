@@ -47,10 +47,7 @@ S, dS = prolate_angular_leg(m, n, c, x)
 R, dR = prolate_radial1(m, n, c, ξ)
 ```
 
-
-## API Reference
-
-### Exported Functions
+## Exported Functions
 
 #### Angular Functions
 - `prolate_angular_leg(m, n, c, x)` - Prolate angular function (Legendre expansion)

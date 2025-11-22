@@ -8,7 +8,7 @@ makedocs(modules = [SpheroidalWaveFunctions],
     ),
     pages = [
         "Home" => "index.md",
-        "API Reference" => "api.md"
+        "API Reference" => "api_reference.md"
     ]
 )
 
