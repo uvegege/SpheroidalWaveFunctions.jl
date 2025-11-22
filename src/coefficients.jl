@@ -1,3 +1,25 @@
+"""
+    compute_dr2_mix(m, n, c, λ, max_terms=25 + div(n - m, 2) + round(Int, abs(c))) -> Vector{Float64}
+
+Compute the expansion coefficients dᵣ for the spheroidal wave function using a mixed method.
+
+Combines backward and forward recursion to compute the expansion coefficients in the
+Legendre function expansion. The coefficients satisfy a three-term recurrence relation.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `c::Number`: spheroidal parameter
+- `λ::Number`: characteristic value
+- `max_terms::Int`: maximum number of expansion terms (default: adaptive)
+
+# Returns
+- Vector of normalized expansion coefficients dᵣ
+
+# Method
+Uses backward recursion from the tail and forward recursion from the start, joining
+at an optimal point to maintain numerical stability.
+"""
 function compute_dr2_mix(m, n, c, λ, max_terms = 25 + div(n - m, 2) + round(Int, abs(c)))
 
     γ² = real(c^2)
@@ -67,6 +89,20 @@ function compute_dr2_mix(m, n, c, λ, max_terms = 25 + div(n - m, 2) + round(Int
 end
 
 
+"""
+    compute_normalization_sum(dr, r_values, m, is_even) -> Float64
+
+Compute the normalization sum for the expansion coefficients.
+
+# Arguments
+- `dr::Vector`: expansion coefficients
+- `r_values::Range`: range of r indices
+- `m::Integer`: azimuthal order
+- `is_even::Bool`: true if (n-m) is even
+
+# Returns
+- Normalization sum value
+"""
 function compute_normalization_sum(dr, r_values, m, is_even)
     x = 0.0
     a = 1.0
@@ -89,6 +125,19 @@ function compute_normalization_sum(dr, r_values, m, is_even)
     return x
 end
 
+"""
+    compute_normalization_constant(m, n, is_even) -> Float64
+
+Compute the normalization constant based on the parity of (n-m).
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `is_even::Bool`: true if (n-m) is even
+
+# Returns
+- Normalization constant
+"""
 function compute_normalization_constant(m, n, is_even)
     if is_even
         return (-1)^((n-m) ÷ 2) * expr_3(m, n)
@@ -98,6 +147,18 @@ function compute_normalization_constant(m, n, is_even)
 end
 
 
+"""
+    pochhammer(a, k) -> Float64
+
+Compute the Pochhammer symbol (rising factorial) (a)ₖ = a(a+1)(a+2)⋯(a+k-1).
+
+# Arguments
+- `a::Number`: base value
+- `k::Integer`: number of terms
+
+# Returns
+- Pochhammer symbol (a)ₖ
+"""
 function pochhammer(a, k)
     result = 1.0
     for i in 0:k-1
@@ -107,20 +168,33 @@ function pochhammer(a, k)
 end
 
 """
-Expression    Increment Xᵣ₊₂ / Xᵣ
+    compute_c2k(m, n, dr) -> Vector{Float64}
 
-(2m+r)!/r!    (2*m+r+1)*(2*m+r+2)/((r+1)*(r+2))
-(-r/2)ₖ       (-r/2 + 1) / (-r/2 + k - 1)
-(m+r/2+0.5)ₖ  (m + r/2 + 0.5 + k)/(m + r/2 + 0.5)
+Compute the power series expansion coefficients c₂ₖ from the Legendre expansion coefficients dᵣ.
 
+Transforms the expansion coefficients from the Legendre function basis to the power series
+basis (1-x²)ᵏ, which is useful for certain computational approaches.
 
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `dr::Vector`: Legendre expansion coefficients
+
+# Returns
+- Vector of power series coefficients c₂ₖ
+
+# Notes
+The recurrence relations used are:
+- (2m+r)!/r! → (2m+r+1)(2m+r+2)/((r+1)(r+2))
+- (-r/2)ₖ → (-r/2 + 1) / (-r/2 + k - 1)
+- (m+r/2+0.5)ₖ → (m + r/2 + 0.5 + k)/(m + r/2 + 0.5)
 """
 function compute_c2k(m, n, dr)
 
     N = length(dr)
     c2k = zeros(N)
     is_even = iseven(n - m)
-    kfact = N < 80 ? 1.0 : 1e-200
+    kfact = N < 80 ? 1.0 : 1e-200 # used on scipy, i had problems when length(dr) is big
     for i in 1:m # 1/((m+k)!/k!)
         kfact *= i 
     end

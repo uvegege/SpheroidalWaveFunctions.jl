@@ -1,4 +1,28 @@
-#TODO: Use a library for computing Pml ????
+"""
+    assoc_legendre_Pm(m, N, x) -> (P, dP)
+
+Compute associated Legendre functions Pₙᵐ(x) and their derivatives for n = m, m+1, ..., N.
+
+Uses upward recurrence relations from DLMF for numerical stability.
+
+# Arguments
+- `m::Integer`: order (m ≥ 0)
+- `N::Integer`: maximum degree (N ≥ m)
+- `x::Number`: argument in [-1, 1]
+
+# Returns
+- `P::Vector`: values [Pₘᵐ(x), Pₘ₊₁ᵐ(x), ..., Pₙᵐ(x)]
+- `dP::Vector`: derivatives [dPₘᵐ/dx, dPₘ₊₁ᵐ/dx, ..., dPₙᵐ/dx]
+
+# Method
+- DLMF 14.10.1: Initial value Pₘᵐ(x) = (-1)ᵐ (2m-1)!! (1-x²)^(m/2)
+- DLMF 14.10.2: Pₘ₊₁ᵐ(x) = x(2m+1)Pₘᵐ(x)
+- DLMF 14.10.3: Upward recurrence for n ≥ m+1
+- DLMF 14.10.5: Derivative formula
+
+# Note
+For large m, numerical overflow may occur. Consider using a specialized library.
+"""
 function assoc_legendre_Pm(m, N, x)
     #@assert N >= m "Need N ≥ m."
 
@@ -79,6 +103,17 @@ end
 
 
 
+"""
+    expr_1(n) -> Float64
+
+Compute (2n)!/n! = (n+1)(n+2)⋯(2n).
+
+# Arguments
+- `n::Integer`: input value
+
+# Returns
+- Value of (2n)!/n!
+"""
 function expr_1(n)
     a = 1.0
     for i in n+1:2*n
@@ -87,10 +122,35 @@ function expr_1(n)
     return a
 end
 
+"""
+    expr_2(n) -> Float64
+
+Compute (2n+2)!/(2(n+1)!).
+
+# Arguments
+- `n::Integer`: input value
+
+# Returns
+- Value of (2n+2)!/(2(n+1)!)
+"""
 function expr_2(n)
     return (2*n+2)*(2*n+1)/(2*(n+1)) * expr_1(n)
 end
 
+"""
+    expr_3(m, n) -> Float64
+
+Compute the normalization factor for even (n-m) case.
+
+Calculates (n+m)! / ((n-m)/2)! / 2^(n-m).
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+
+# Returns
+- Normalization factor for even (n-m)
+"""
 function expr_3(m, n)
     k1 = div(n+m, 2)
     a = 1.0
@@ -105,6 +165,20 @@ function expr_3(m, n)
 end
 
 
+"""
+    expr_4(m, n) -> Float64
+
+Compute the normalization factor for odd (n-m) case.
+
+Calculates (n+m+1)! / ((n-m-1)/2)! / 2^(n-m).
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+
+# Returns
+- Normalization factor for odd (n-m)
+"""
 function expr_4(m, n)
     k1 = div(n + m + 1, 2) 
     a = 1.0
@@ -118,27 +192,120 @@ function expr_4(m, n)
     return a 
 end
 
+"""
+    αᵣ(m, r, γ²) -> Number
+
+Compute the upper diagonal element of the three-term recurrence relation.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `r::Integer`: index
+- `γ²::Number`: γ² = c²
+
+# Returns
+- Coefficient αᵣ
+"""
 @inline αᵣ(m, r, γ²) = γ² * ((2 * m + r) + 2) * ((2 * m + r) + 1) / (((2 * m + 2 * r) + 5) * ((2 * m + 2 * r) + 3))
+
+"""
+    βᵣ(m, r, γ²) -> Number
+
+Compute the diagonal element of the three-term recurrence relation.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `r::Integer`: index
+- `γ²::Number`: γ² = c²
+
+# Returns
+- Coefficient βᵣ
+"""
 @inline βᵣ(m, r, γ²) = (m + r) * ((m + r) + 1) + γ² * (2 * (m + r) * ((m + r) + 1) - 2 * m^2 - 1) / (((2 * m + 2 * r) - 1) * ((2 * m + 2 * r) + 3))
+
+"""
+    γᵣ(m, r, γ²) -> Number
+
+Compute the lower diagonal element of the three-term recurrence relation.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `r::Integer`: index
+- `γ²::Number`: γ² = c²
+
+# Returns
+- Coefficient γᵣ
+"""
 @inline γᵣ(m, r, γ²) = γ² * (r * (r - 1)) / (((2 * m + 2 * r) - 3) * ((2 * m + 2 * r) - 1))
+
+"""
+    γᵐ(m, r, γ²) -> Number
+
+Alias for βᵣ used in the continued fraction formulation.
+"""
 @inline γᵐ(m, r, γ²) = βᵣ(m, r, γ²)
+
+"""
+    βᵐ(m, r, γ²) -> Number
+
+Compute the product γᵣ(m, r, γ²) * αᵣ(m, r-2, γ²) used in the continued fraction.
+"""
 @inline βᵐ(m, r, γ²) = γᵣ(m, r, γ²) * αᵣ(m, r - 2, γ²)
 
 
-#@inline sphericalbesselj_derivative(ν, z) = -sphericalbesselj(ν+1, z) + (ν/z) * sphericalbesselj(ν, z)
-#@inline sphericalbessely_derivative(ν, z) = -sphericalbessely(ν+1, z) + (ν/z) * sphericalbessely(ν, z)
+"""
+    sphericalbesselj_derivative(ν, z) -> Number
+
+Compute the derivative of the spherical Bessel function jᵥ(z) with respect to z.
+
+Uses the recurrence relation: jᵥ'(z) = jᵥ₋₁(z) - (ν+1)/z jᵥ(z).
+
+# Arguments
+- `ν::Number`: order
+- `z::Number`: argument
+
+# Returns
+- Derivative djᵥ/dz
+"""
 @inline sphericalbesselj_derivative(ν, z) = sphericalbesselj(ν-1, z) - (ν+1)/z * sphericalbesselj(ν, z)
+
+"""
+    sphericalbessely_derivative(ν, z) -> Number
+
+Compute the derivative of the spherical Neumann function yᵥ(z) with respect to z.
+
+Uses the recurrence relation: yᵥ'(z) = yᵥ₋₁(z) - (ν+1)/z yᵥ(z).
+
+# Arguments
+- `ν::Number`: order
+- `z::Number`: argument
+
+# Returns
+- Derivative dyᵥ/dz
+"""
 @inline sphericalbessely_derivative(ν, z) = sphericalbessely(ν-1, z) - (ν+1)/z * sphericalbessely(ν, z)
 
 
 
 
 """
-    Nmn_norm_const(m, n, dr)
+    Nmn(m, n, dr) -> Float64
 
-Normalization constant
-Calcula la constante de normalización N_mn(c) (Eq. 10) usando la recursión para la 
-parte factorial.
+Compute the normalization constant Nₘₙ(c) for spheroidal wave functions.
+
+Calculates the normalization constant using the expansion coefficients and
+factorial recursion relations.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `dr::Vector`: expansion coefficients
+
+# Returns
+- Normalization constant Nₘₙ(c)
+
+# Note
+The normalization ensures proper orthogonality and norm conditions for the
+spheroidal wave functions.
 """
 function Nmn(m, n, dr)
     

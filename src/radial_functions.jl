@@ -1,3 +1,16 @@
+"""
+    Fmn(m, n, dr) -> Float64
+
+Compute the normalization factor Fₘₙ for radial spheroidal wave functions.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `dr::Vector`: expansion coefficients
+
+# Returns
+- Normalization factor Fₘₙ
+"""
 function Fmn(m, n, dr)
     init = iseven(n-m) ? 0 : 1
     nmax = length(dr)
@@ -16,6 +29,25 @@ function Fmn(m, n, dr)
     return sum
 end
 
+"""
+    spheroidal_rad_1(m, n, c, dr, ξ) -> (R, dR)
+
+Compute the radial spheroidal wave function of the first kind using spherical Bessel functions.
+
+The first kind radial function is regular at ξ = 1 and is expressed as a series
+of spherical Bessel functions jₙ.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `c::Number`: spheroidal parameter
+- `dr::Vector`: expansion coefficients
+- `ξ::Number`: radial argument (ξ ≥ 1)
+
+# Returns
+- `R`: value of the radial function Rₘₙ⁽¹⁾(c, ξ)
+- `dR`: derivative dRₘₙ⁽¹⁾/dξ
+"""
 function spheroidal_rad_1(m, n, c, dr, ξ)
     #λ =  find_eigenvalue(m, n, c)
     #dr = compute_dr2_mix(m, n, c, λ)
@@ -46,6 +78,25 @@ function spheroidal_rad_1(m, n, c, dr, ξ)
     return S, dS
 end
 
+"""
+    spheroidal_rad_2(m, n, c, dr, ξ) -> (R, dR)
+
+Compute the radial spheroidal wave function of the second kind using spherical Neumann functions.
+
+The second kind radial function is irregular at ξ = 1 and is expressed as a series
+of spherical Neumann functions yₙ.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `c::Number`: spheroidal parameter
+- `dr::Vector`: expansion coefficients
+- `ξ::Number`: radial argument (ξ ≥ 1)
+
+# Returns
+- `R`: value of the radial function Rₘₙ⁽²⁾(c, ξ)
+- `dR`: derivative dRₘₙ⁽²⁾/dξ
+"""
 function spheroidal_rad_2(m, n, c, dr, ξ)
     #λ =  find_eigenvalue(m, n, c)
     #dr = compute_dr2_mix(m, n, c, λ)
@@ -76,7 +127,22 @@ function spheroidal_rad_2(m, n, c, dr, ξ)
     return S, dS
 end
 
-# Reference: (36) and (37) / DLMF: (30.11.10) / (30.11.11)
+"""
+    kmn1(m, n, c) -> Float64
+
+Compute the normalization constant kₘₙ for the first radial function.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `c::Number`: spheroidal parameter
+
+# Returns
+- Normalization constant kₘₙ
+
+# Reference
+DLMF: (30.11.10) / (30.11.11)
+"""
 function kmn1(m, n, c)
     λ =  find_eigenvalue(m, n, c)
     dr = compute_dr2_mix(m, n, c, λ)

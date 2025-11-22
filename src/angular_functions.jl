@@ -1,10 +1,23 @@
 """
-    spheroidal_ang_1(m, n, c, x)
+    spheroidal_ang_1(m, n, dr, x) -> (S, dS)
 
-Smn(x, γ²) = ∑₀  d₂ᵣ(c) Psₘ₊₂ᵣᵐ(η)
+Compute the angular spheroidal wave function using Legendre function expansion (method 1).
 
-Smn(x, γ²) = ∑₀  d₂ᵣ₊₁(c) Psₘ₊₂ᵣ₊₁ᵐ(η)
+Evaluates the spheroidal function as:
+- Sₘₙ(x, γ²) = ∑ₖ d₂ₖ(c) Pₘ₊₂ₖᵐ(x)  for even (n-m)
+- Sₘₙ(x, γ²) = ∑ₖ d₂ₖ₊₁(c) Pₘ₊₂ₖ₊₁ᵐ(x)  for odd (n-m)
 
+where Pₙᵐ are associated Legendre functions.
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `dr::Vector`: expansion coefficients dᵣ
+- `x::Number`: argument in [-1, 1]
+
+# Returns
+- `S`: value of the angular function Sₘₙ(x)
+- `dS`: derivative dSₘₙ/dx
 """
 function spheroidal_ang_1(m, n, dr, x)
     #λ =  find_eigenvalue(m, n, c)
@@ -25,12 +38,25 @@ function spheroidal_ang_1(m, n, dr, x)
     return s*S, s*dS
 end
 
+
 """
-    spheroidal_ang_2(m, n, c, x)
+    spheroidal_ang_2(m, n, c2k, x) -> (S, dS)
 
-Smn(x, γ²) = (-1)ᵐ (1 - x²)^(m/2) ∑ₖ₌₀ c₂ₖ (1 - x²)ᵏ
+Compute the angular spheroidal wave function using power series expansion (method 2).
 
-Smn(x, γ²) = (-1)ᵐ x(1 - x²)^(m/2) ∑ₖ₌₀ c₂ₖ (1 - x²)ᵏ
+Evaluates the spheroidal function as:
+- Sₘₙ(x, γ²) = (-1)ᵐ (1 - x²)^(m/2) ∑ₖ c₂ₖ (1 - x²)ᵏ  for even (n-m)
+- Sₘₙ(x, γ²) = (-1)ᵐ x(1 - x²)^(m/2) ∑ₖ c₂ₖ (1 - x²)ᵏ  for odd (n-m)
+
+# Arguments
+- `m::Integer`: azimuthal order
+- `n::Integer`: mode number
+- `c2k::Vector`: power series coefficients c₂ₖ
+- `x::Number`: argument in [-1, 1]
+
+# Returns
+- `S`: value of the angular function Sₘₙ(x)
+- `dS`: derivative dSₘₙ/dx
 """
 function spheroidal_ang_2(m, n, c2k, x)
     #λ =  find_eigenvalue(m, n, c)
