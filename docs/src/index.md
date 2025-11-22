@@ -2,6 +2,13 @@
 
 A Julia implementation for computing angular and radial spheroidal wave functions and their associated eigenvalues.
 
+## Background
+
+Spheroidal wave functions are solutions to the Helmholtz equation in spheroidal coordinates. They appear in electromagnetic and acoustic scattering problems, among other applications.
+
+This package was developed to support [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl) and provides a native Julia implementation based on standard mathematical references.
+
+
 ## Overview
 
 This package provides functions to compute:
@@ -38,18 +45,70 @@ S, dS = prolate_angular_leg(m, n, c, x)
 R, dR = prolate_radial1(m, n, c, ξ)
 ```
 
-## Background
 
-Spheroidal wave functions are solutions to the Helmholtz equation in spheroidal coordinates. They appear in electromagnetic and acoustic scattering problems, among other applications.
+## API Reference
 
-This package was developed to support [AnalyticEMModes.jl](https://github.com/uvegege/AnalyticEMModes.jl) and provides a native Julia implementation based on standard mathematical references.
+### Exported Functions
 
-## References
+#### Angular Functions
+- `prolate_angular_leg(m, n, c, x)` - Prolate angular function (Legendre expansion)
+- `prolate_angular_ps(m, n, c, x)` - Prolate angular function (power series)
+- `oblate_angular_leg(m, n, c, x)` - Oblate angular function (Legendre expansion)
+- `oblate_angular_ps(m, n, c, x)` - Oblate angular function (power series)
 
-The implementation follows definitions and algorithms from:
-- **NIST DLMF** Chapter 30: "Spheroidal Wave Functions"
-- **Abramowitz & Stegun**: *Handbook of Mathematical Functions*, Chapter 21
-- **Zhang & Jin** (1996): *Computation of Special Functions*
-- **Falloon et al.** (2003): "Theory and computation of spheroidal wavefunctions"
+#### Radial Functions
+- `prolate_radial1(m, n, c, ξ)` - Prolate radial function, first kind
+- `prolate_radial2(m, n, c, ξ)` - Prolate radial function, second kind
+- `oblate_radial1(m, n, c, ξ)` - Oblate radial function, first kind
+- `oblate_radial2(m, n, c, ξ)` - Oblate radial function, second kind
+
+#### Characteristic Values
+- `prolate_cv(m, n, c)` - Single prolate characteristic value
+- `oblate_cv(m, n, c)` - Single oblate characteristic value
+- `prolate_cv_seq(m, n, c)` - Sequence of prolate characteristic values
+- `oblate_cv_seq(m, n, c)` - Sequence of oblate characteristic values
+
+All angular and radial functions return `(value, derivative)` tuples.
 
 See the [API Reference](@ref) for detailed function documentation.
+
+## Limitations and Known Issues
+
+- Limited testing coverage compared to mature packages like SciPy's `special` module
+- May not handle all edge cases or extreme parameter values
+- Numerical stability for very large parameters has not been extensively tested
+
+## Contributing
+
+Contributions are welcome and appreciated! Whether you find a bug, have an idea for improvement, or want to add new functionality, please feel free to:
+
+- Open an issue to report bugs or discuss enhancements
+- Submit a pull request with improvements or fixes
+- Share your use cases and feedback
+
+Any help in expanding test coverage, improving documentation, or optimizing performance is especially appreciated.
+
+## Related Packages
+
+- **Python**: [scipy.special.pro_ang1](https://docs.scipy.org/doc/scipy/reference/special.html) and related functions
+- **Mathematica**: Built-in `SpheroidalPS`, `SpheroidalQS` functions
+- **Fortran**: Various implementations in SLATEC and elsewhere
+
+
+## Mathematical References
+
+The implementation follows standard definitions and algorithms from:
+
+- **NIST Digital Library of Mathematical Functions (DLMF)**: Chapter 30, "Spheroidal Wave Functions"
+- **Abramowitz & Stegun**: *Handbook of Mathematical Functions*, Chapter 21
+- **Zhang, S., & Jin, J.** (1996): *Computation of Special Functions*, Wiley (Fortran implementation used as reference by SciPy)
+- **Falloon, P. E., Abbott, P. C., & Wang, J. B.** (2003): "Theory and computation of spheroidal wavefunctions", *Journal of Physics A: Mathematical and General*, 36(20), 5477
+- **Li, L. W., Kang, X. K., & Leong, M. S.** (2002): *Spheroidal Wave Functions in Electromagnetic Theory*, Wiley
+- **Adelman, R., Gumerov, N. A., & Duraiswami, R.** (2014): "Software for Computing the Spheroidal Wave Functions Using Arbitrary Precision Arithmetic", arXiv:1408.0074
+
+The numerical methods used include:
+- Eigenvalue computation via symmetric tridiagonal matrix methods
+- Newton-Raphson refinement with continued fractions
+- Mixed forward-backward recursion for expansion coefficients
+
+
