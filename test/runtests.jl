@@ -157,7 +157,7 @@ end
                 for n in m:(m+plus_n)
                     py_rad2, py_drad2 = pyconvert(Tuple{Float64, Float64}, scipy.special.obl_rad2(m, n, c, xi))
                     ju_rad2, ju_drad2 = oblate_radial2(m, n, c, xi)
-                    @test abs((py_rad2 - ju_rad2)/ py_rad2) <= 1e-4 || @show m, n, c, xi
+                    @test abs((py_rad2 - ju_rad2)/ py_rad2) <= 1e-4 
                     #@test abs((py_drad2 - ju_drad2)/ py_drad2) <= 1e-4 
                 end
             end

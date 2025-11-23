@@ -20,7 +20,7 @@ The goal is not to provide cutting-edge or highly optimized methods, but simply 
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/uvegege/SpheroidalWaveFunctions.jl")
+Pkg.add("SpheroidalWaveFunctions.jl")
 ```
 
 ## Quick Start
