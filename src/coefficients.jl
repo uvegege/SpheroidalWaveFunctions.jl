@@ -35,12 +35,11 @@ function compute_dr2_mix(m, n, c, λ, max_terms = 25 + div(n - m, 2) + round(Int
     
     start_idx = is_even ? length(r_values) : length(r_values) - 1
     dr[start_idx] = 1.0
-
+    N = 1.0
     # Compute coefficients downwards using continued fraction
     for i in start_idx-1:-1:max(point, 1)
         r = r_values[i+1]  # Current r
         r_prev = r_values[i]  # r-2
-        
         if i == start_idx-1
             N = 1.0
         else
