@@ -1,5 +1,7 @@
 # SpheroidalWaveFunctions.jl
 
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://uvegege.github.io/SpheroidalWaveFunctions.jl/dev/)
+
 A Julia implementation for computing angular and radial spheroidal wave functions ($S_{mn}$, $R_{mn}^{(i)}$) and their associated eigenvalues ($\lambda_{mn}$).
 
 ## Background
@@ -47,5 +49,5 @@ S_obl, dS_obl = oblate_angular_ps(m, n, c, x)
 
 ## Acknowledgments
 
-Some implementation details (such as matrix sizes and initial values) were informed by examining SciPy's routines and Zhang & Jin's Fortran code. The development benefited from examining SciPy's spheroidal wave function routines and Zhang & Jin's Fortran code for guidance on implementation details and numerical validation.
+Some implementation details (such as matrix sizes and initial values) were informed by examining SciPy's routines and Zhang & Jin's Fortran code.
 

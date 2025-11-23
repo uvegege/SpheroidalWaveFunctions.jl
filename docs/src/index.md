@@ -24,7 +24,7 @@ Both **prolate** and **oblate** cases are supported.
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/uvegege/SpheroidalWaveFunctions.jl")
+Pkg.add("SpheroidalWaveFunctions.jl")
 ```
 
 ## Quick Example
