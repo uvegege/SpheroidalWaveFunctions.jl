@@ -206,16 +206,16 @@ R, dR = prolate_radial2(1, 2, 0.5, 1.5)
 function prolate_radial2(m, n, c, ξ)
     λ =  find_eigenvalue(m, n, c)
     dr = compute_dr2_mix(m, n, c, λ)
-    return spheroidal_rad_2(m, n, c, dr, ξ)
+    return spheroidal_rad_2(m, n, c, λ, dr, ξ)
 end
 
 function prolate_radial2(m, n, c, λ, ξ)
     dr = compute_dr2_mix(m, n, c, λ)
-    return spheroidal_rad_2(m, n, c, dr, ξ)
+    return spheroidal_rad_2(m, n, c, λ, dr, ξ)
 end
 
 function prolate_radial2(m, n, c, λ, dr, ξ)
-    return spheroidal_rad_2(m, n, c, dr, ξ)
+    return spheroidal_rad_2(m, n, c, λ, dr, ξ)
 end
 
 
@@ -253,7 +253,7 @@ function oblate_radial1(m, n, c, ξ)
 end
 
 function oblate_radial1(m, n, c, λ, ξ)
-    dr = compute_dr2_mix(m, n, c, λ)
+    dr = compute_dr2_mix(m, n, im*c, λ)
     return spheroidal_rad_1(m, n, im*c, dr, im*ξ)
 end
 
@@ -290,16 +290,16 @@ R, dR = oblate_radial2(1, 2, 0.5, 1.5)
 function oblate_radial2(m, n, c, ξ)
     λ =  find_eigenvalue(m, n, im*c)
     dr = compute_dr2_mix(m, n, im*c, λ)
-    return spheroidal_rad_2(m, n, im*c, dr, im*ξ)
+    return spheroidal_rad_2(m, n, im*c, λ, dr, im*ξ)
 end
 
 function oblate_radial2(m, n, c, λ, ξ)
-    dr = compute_dr2_mix(m, n, c, λ)
-    return spheroidal_rad_2(m, n, im*c, dr, im*ξ)
+    dr = compute_dr2_mix(m, n, im*c, λ)
+    return spheroidal_rad_2(m, n, im*c, λ, dr, im*ξ)
 end
 
 function oblate_radial2(m, n, c, λ, dr, ξ)
-    return spheroidal_rad_2(m, n, im*c, dr, im*ξ)
+    return spheroidal_rad_2(m, n, im*c, λ, dr, im*ξ)
 end
 
 

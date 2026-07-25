@@ -53,7 +53,7 @@ function spheroidal_rad_1(m, n, c, dr, ξ)
     #dr = compute_dr2_mix(m, n, c, λ)
     Fmn_val = Fmn(m, n, dr)
     factor = 1/Fmn_val * (1 - 1/real(ξ^2))^(m/2)
-    dfactor = m * (1 - 1/real(ξ^2)) ^((m-2)/2) * abs(ξ)^(-3)  / Fmn_val
+    dfactor = m * sign(real(ξ^2)) * (1 - 1/real(ξ^2)) ^((m-2)/2) * abs(ξ)^(-3)  / Fmn_val
     init = iseven(n-m) ? 0 : 1
     nmax = length(dr)
 
@@ -102,7 +102,7 @@ function spheroidal_rad_2(m, n, c, dr, ξ)
     #dr = compute_dr2_mix(m, n, c, λ)
     Fmn_val = Fmn(m, n, dr)
     factor = 1/Fmn_val * (1 - 1/real(ξ^2))^(m/2)
-    dfactor = m * (1 - 1/real(ξ^2)) ^((m-2)/2) * abs(ξ)^(-3)  / Fmn_val
+    dfactor = m * sign(real(ξ^2)) * (1 - 1/real(ξ^2)) ^((m-2)/2) * abs(ξ)^(-3)  / Fmn_val
     init = iseven(n-m) ? 0 : 1
     nmax = length(dr)
 

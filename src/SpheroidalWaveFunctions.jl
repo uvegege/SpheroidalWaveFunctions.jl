@@ -8,6 +8,7 @@ module SpheroidalWaveFunctions
     include("./coefficients.jl")
     include("./angular_functions.jl")
     include("./radial_functions.jl")
+    include("./special_radial.jl")
     include("./definitions.jl")
 
     export prolate_angular_leg, prolate_angular_ps
@@ -24,4 +25,3 @@ module SpheroidalWaveFunctions
     export oblate_cv_seq
 
 end
-

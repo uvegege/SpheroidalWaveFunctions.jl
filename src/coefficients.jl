@@ -1,5 +1,5 @@
 """
-    compute_dr2_mix(m, n, c, λ, max_terms=25 + div(n - m, 2) + round(Int, abs(c)))
+    compute_dr2_mix(m, n, c, λ, max_terms=60 + div(n - m, 2) + round(Int, abs(c)))
 
 Compute the expansion coefficients dᵣ for the spheroidal wave function using a mixed method.
 
@@ -11,27 +11,36 @@ Legendre function expansion. The coefficients satisfy a three-term recurrence re
 - `n::Integer`: mode number
 - `c::Number`: spheroidal parameter
 - `λ::Number`: characteristic value
-- `max_terms::Int`: maximum number of expansion terms (default: adaptive)
+- `max_terms::Int`: maximum number of expansion terms before tail trimming
 
 # Returns
 - Vector of normalized expansion coefficients dᵣ
 
 # Method
 Uses backward recursion from the tail and forward recursion from the start, joining
-at an optimal point to maintain numerical stability.
+at an optimal point to maintain numerical stability, then trims negligible tail terms.
 """
-function compute_dr2_mix(m, n, c, λ, max_terms = 25 + div(n - m, 2) + round(Int, abs(c)))
+function compute_dr2_mix(m, n, c, λ, max_terms = 60 + div(n - m, 2) + round(Int, abs(c)))
 
     γ² = real(c^2)
     is_even = iseven(n - m)
-    point = div((n-m+2), 2) - (floor(Int, log10(abs(c))) + 1)
+    dr = zeros(max_terms)
+    r_values = is_even ? (0:2:2*(max_terms-1)) : (1:2:2*max_terms-1)
+
+    if iszero(γ²)
+        dr[div(n - m, 2) + 1] = 1.0
+        x = compute_normalization_sum(dr, r_values, m, is_even)
+        s = compute_normalization_constant(m, n, is_even) / x
+        dr .*= s
+        return dr[1:div(n - m, 2) + 1]
+    end
+
+    point = div((n-m+2), 2) - (floor(Int, log10(max(abs(c), 1e-5))) + 1)
     #point = div((n-m), 2) - (floor(Int, log10(abs(c))) + 1)
 
     if point <= 1
         point = 1
     end
-    dr = zeros(max_terms)
-    r_values = is_even ? (0:2:2*(max_terms-1)) : (1:2:2*max_terms-1)
     
     start_idx = is_even ? length(r_values) : length(r_values) - 1
     dr[start_idx] = 1.0
@@ -49,6 +58,19 @@ function compute_dr2_mix(m, n, c, λ, max_terms = 25 + div(n - m, 2) + round(Int
         end
         α_val = αᵣ(m, r_prev, γ²) 
         dr[i] = -(α_val / N) * dr[i+1] # Compute d_{r-2} from d_r
+        if abs(dr[i]) > 1e100
+            for k in i:start_idx
+                dr[k] *= 1e-100
+            end
+        elseif 0 < abs(dr[i]) < 1e-100
+            for k in i:start_idx
+                dr[k] *= 1e100
+            end
+        end
+        if !isfinite(dr[i])
+            point = i + 1
+            break
+        end
     end
 
     # Compute coefficients with forward marching
@@ -84,9 +106,14 @@ function compute_dr2_mix(m, n, c, λ, max_terms = 25 + div(n - m, 2) + round(Int
 
     dr .*= s
     
-    return dr
+    return trim_dr_tail(dr, m, n)
 end
 
+function trim_dr_tail(dr, m, n; guard_terms=3)
+    minimum_terms = div(n - m, 2) + 1
+    length(dr) <= minimum_terms + guard_terms && return dr
+    return dr[1:end-guard_terms]
+end
 
 """
     compute_normalization_sum(dr, r_values, m, is_even)

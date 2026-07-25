@@ -26,7 +26,7 @@ For large m, numerical overflow may occur. Consider using a specialized library.
 function assoc_legendre_Pm(m, N, x)
     #@assert N >= m "Need N ≥ m."
 
-    P  = zeros(Float64, N - m + 1)
+    P = zeros(Float64, N - m + 1)
     dP = zeros(Float64, N - m + 1)
 
     # -------------------------
