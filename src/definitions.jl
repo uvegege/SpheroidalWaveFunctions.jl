@@ -235,7 +235,7 @@ The radial function is regular at the origin and corresponds to the modified sph
 - `c::Number`: spheroidal parameter
 - `λ::Number`: characteristic value (optional, computed if not provided)
 - `dr::Vector`: expansion coefficients (optional, computed if not provided)
-- `ξ::Number`: radial argument (ξ ≥ 1)
+- `ξ::Number`: radial argument (ξ ≥ 0)
 
 # Returns
 - `R`: value of the radial function Rₘₙ⁽¹⁾(-ic, iξ)
@@ -276,7 +276,7 @@ The radial function is irregular at the origin and corresponds to the modified s
 - `c::Number`: spheroidal parameter
 - `λ::Number`: characteristic value (optional, computed if not provided)
 - `dr::Vector`: expansion coefficients (optional, computed if not provided)
-- `ξ::Number`: radial argument (ξ ≥ 1)
+- `ξ::Number`: radial argument (ξ ≥ 0)
 
 # Returns
 - `R`: value of the radial function Rₘₙ⁽²⁾(-ic, iξ)

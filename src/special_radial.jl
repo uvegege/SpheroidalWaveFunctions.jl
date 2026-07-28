@@ -198,12 +198,13 @@ end
 
 function use_prolate_radial2_legendreQ(m, n, c, ξ)
     δ = ξ - 1
+    δ < 0 && return false
     ρ = c / (n + 1)
     within(limit) = δ <= limit + 16*eps(float(ξ))
-    m == 0 && return iseven(n) && within(0.15)
+    m == 0 && return iseven(n) && within(0.19)
     m == 1 && return ρ <= 1.5 && within(0.075)
     m == 2 && return ρ <= 1.0 ? within(0.10) : ρ <= 1.5 && within(0.02)
-    m == 3 && return ρ <= 1.5 && within(0.10)
+    m == 3 && return ρ <= 1.5 ? within(0.10) : ρ <= 2.0 && within(0.02)
     return m == 4 && ρ <= 1.5 && within(0.10)
 end
 
@@ -233,54 +234,145 @@ function compute_qstar_alpha(c2k; nterms=length(c2k))
     return alpha
 end
 
-function compute_oblate_qstar_even(m, c, k1, c2k)
+function binomial_float(n, k)
+    (k < 0 || n < k) && return 0.0
+    value = 1.0
+    for j in 1:k
+        value *= (n - k + j) / j
+    end
+    return value
+end
+
+function oblate_k1_phase(m, n, k1)
+    power = iseven(n - m) ? m : m + 1
+    return (1.0im)^power * k1
+end
+
+function compute_oblate_qstar(m, n, c, k1, c2k)
     alpha = compute_qstar_alpha(c2k)
     value = 0.0 + 0.0im
+    odd = isodd(n - m)
 
     for r in 0:m
-        value += alpha[r+1] * product_to(2*m - 2r) / (product_to(r) * (2.0^(m - r) * product_to(m - r))^2)
+        top = odd ? 2*m - 2r + 1 : 2*m - 2r
+        value += alpha[r+1] * product_to(top) / (product_to(r) * (2.0^(m - r) * product_to(m - r))^2)
     end
 
-    return ((1.0im)^(-m) * k1)^2 * value / c
+    sign = odd ? -1 : 1
+    return sign * oblate_k1_phase(m, n, k1)^2 * value / c
 end
 
-function compute_oblate_h2r_even(m, c, qstar, k1, c2k, r)
+compute_oblate_qstar_even(m, c, k1, c2k) = compute_oblate_qstar(m, m, c, k1, c2k)
+
+function oblate_h_even_sum(m, c2k, r)
     value = 0.0 + 0.0im
-
     for k in max(0, r - m + 1):length(c2k)-1
-        value += c2k[k+1] * (m + 2k) * product_to(m + k - 1) / (product_to(m + k - 1 - r) * product_to(r))
+        value += c2k[k+1] * (m + 2k) * binomial_float(m + k - 1, r)
     end
-
-    return -2 * qstar * value / ((1.0im)^(-m) * k1)
+    return value
 end
 
-function compute_oblate_B2r_even(m, n, c, λ, qstar, k1, c2k, R1_0; nterms=length(c2k))
+function oblate_h_odd_sum(m, c2k, r)
+    value = 0.0 + 0.0im
+    for k in max(0, r - m):length(c2k)-1
+        value += c2k[k+1] * (m + 2k + 1) * binomial_float(m + k, r)
+    end
+    return value - oblate_h_even_sum(m, c2k, r)
+end
+
+function compute_oblate_h2r(m, n, c, qstar, k1, c2k, r)
+    series = iseven(n - m) ? oblate_h_even_sum(m, c2k, r) : oblate_h_odd_sum(m, c2k, r)
+    return -2 * qstar * series / oblate_k1_phase(m, n, k1)
+end
+
+compute_oblate_h2r_even(m, c, qstar, k1, c2k, r) = compute_oblate_h2r(m, m, c, qstar, k1, c2k, r)
+
+function oblate_B_recurrence_terms(m, n, c, λ, qstar, k1, c2k, r)
+    if iseven(n - m)
+        α = (2r + 2) * (2r + 3)
+        β = (2r + 1) * (2r - 2*m + 2) + m * (m - 1) - λ
+    else
+        α = (2r + 1) * (2r + 2)
+        β = 2r * (2r - 2*m + 1) + m * (m - 1) - λ
+    end
+    γ = c^2
+    h = compute_oblate_h2r(m, n, c, qstar, k1, c2k, r)
+    return α, β, γ, h
+end
+
+function complete_oblate_B_tail!(B, m, n, c, λ, qstar, k1, c2k, anchor; extra=120)
+    first_unknown = anchor + 1
+    nunknown = length(B) - anchor
+    nunknown <= 0 && return B
+    nsolve = nunknown + extra
+
+    lower = zeros(ComplexF64, max(nsolve - 1, 0))
+    diag = zeros(ComplexF64, nsolve)
+    upper = zeros(ComplexF64, max(nsolve - 1, 0))
+    rhs = zeros(ComplexF64, nsolve)
+
+    for j in 1:nsolve
+        r = anchor + j - 1
+        α, β, γ, h = oblate_B_recurrence_terms(m, n, c, λ, qstar, k1, c2k, r)
+        diag[j] = β
+        j < nsolve && (upper[j] = α)
+        if j == 1
+            rhs[j] = h - γ * B[anchor]
+        else
+            rhs[j] = h
+            lower[j-1] = γ
+        end
+    end
+
+    tail = Tridiagonal(lower, diag, upper) \ rhs
+    B[first_unknown:end] .= tail[1:nunknown]
+    return B
+end
+
+function odd_double_factorial(n)
+    value = 1.0
+    for k in 1:2:n
+        value *= k
+    end
+    return value
+end
+
+function oblate_radial1_origin_data(m, n, c, dr)
+    init = iseven(n - m) ? 0 : 1
+    fact = 1.0
+    for i in init+1:2*m+init
+        fact *= i
+    end
+    sign = (-1)^div(init - (n - m), 2)
+    leading = sign * dr[1] * fact * c^(m + init) / (Fmn(m, n, dr) * odd_double_factorial(2m + 2init + 1))
+
+    return init == 0 ? (leading, 0.0) : (0.0, leading)
+end
+
+function compute_oblate_B2r(m, n, c, λ, qstar, k1, c2k, R1_0, dR1_0; nterms=length(c2k))
     B = zeros(ComplexF64, nterms)
-    B[1] = c / R1_0 - qstar * R1_0
+    B[1] = iseven(n - m) ? inv(c * R1_0) - qstar * R1_0 : -inv(c * dR1_0)
 
     for r in 0:nterms-2
-        α2r = (2r + 2) * (2r + 3)
-        β2r = (2r + 1) * (2r - 2*m + 2) + m * (m - 1) - λ
-        h2r = compute_oblate_h2r_even(m, c, qstar, k1, c2k, r)
-        B[r+2] = (h2r - β2r * B[r+1] - (r >= 1 ? c^2 * B[r] : 0.0)) / α2r
+        α, β, γ, h = oblate_B_recurrence_terms(m, n, c, λ, qstar, k1, c2k, r)
+        B[r+2] = (h - β * B[r+1] - (r >= 1 ? γ * B[r] : 0.0)) / α
+    end
+
+    peak = argmax(abs.(B))
+    if peak < nterms
+        complete_oblate_B_tail!(B, m, n, c, λ, qstar, k1, c2k, peak)
     end
 
     return B
 end
 
+compute_oblate_B2r_even(m, n, c, λ, qstar, k1, c2k, R1_0; nterms=length(c2k)) = compute_oblate_B2r(m, n, c, λ, qstar, k1, c2k, R1_0, 0.0 + 0.0im; nterms=nterms)
+
 function oblate_radial1_value_at_zero(m, n, c, dr)
-    value = first(spheroidal_rad_1(m, n, im * c, dr, 0.0 + 0.0im))
-    isfinite(real(value)) && return value
-
-    for ξ in (1e-10, 1e-8, 1e-6, 1e-4)
-        value = first(spheroidal_rad_1(m, n, im * c, dr, im * ξ))
-        isfinite(real(value)) && return value
-    end
-
-    return value
+    return first(oblate_radial1_origin_data(m, n, c, dr))
 end
 
-function eval_oblate_g_even(m, B, ξ; rtol=1e-14)
+function eval_oblate_g(m, n, B, ξ; rtol=1e-14)
     ξ2 = ξ^2
     power = 1.0
     poly = 0.0 + 0.0im
@@ -297,76 +389,60 @@ function eval_oblate_g_even(m, B, ξ; rtol=1e-14)
 
     factor = (1 + ξ2)^(-m / 2)
     dfactor = -m * ξ * (1 + ξ2)^(-m / 2 - 1)
-    g = ξ * factor * poly
-    dg = factor * poly + ξ * dfactor * poly + ξ * factor * dpoly
+    if iseven(n - m)
+        g = ξ * factor * poly
+        dg = factor * poly + ξ * dfactor * poly + ξ * factor * dpoly
+    else
+        g = factor * poly
+        dg = dfactor * poly + factor * dpoly
+    end
 
     return g, dg
 end
 
-function oblate_radial2_arctan_even_data(m, n, c, λ, dr)
+eval_oblate_g_even(m, B, ξ; rtol=1e-14) = eval_oblate_g(m, m, B, ξ; rtol=rtol)
+
+function oblate_radial2_arctan_data(m, n, c, λ, dr)
     c2k = compute_c2k(m, n, dr)
     k1 = kmn1(m, n, im * c)
-    qstar = compute_oblate_qstar_even(m, c, k1, c2k)
-    R1_0 = oblate_radial1_value_at_zero(m, n, c, dr)
-    B = compute_oblate_B2r_even(m, n, c, λ, qstar, k1, c2k, R1_0)
+    qstar = compute_oblate_qstar(m, n, c, k1, c2k)
+    R1_0, dR1_0 = oblate_radial1_origin_data(m, n, c, dr)
+    B = compute_oblate_B2r(m, n, c, λ, qstar, k1, c2k, R1_0, dR1_0)
     return qstar, B
 end
 
-function oblate_radial2_arctan_even(m, n, c, dr, qstar, B, ξ)
+oblate_radial2_arctan_even_data(m, n, c, λ, dr) = oblate_radial2_arctan_data(m, n, c, λ, dr)
+
+function oblate_radial2_arctan(m, n, c, dr, qstar, B, ξ)
     R1, dR1 = spheroidal_rad_1(m, n, im * c, dr, im * ξ)
-    g, dg = eval_oblate_g_even(m, B, ξ)
+    g, dg = eval_oblate_g(m, n, B, ξ)
     h0 = atan(ξ) - π / 2
     R = qstar * R1 * h0 + g
     dR = qstar * dR1 * h0 + qstar * R1 / (1 + ξ^2) + dg
 
-    return real(R / c^2), real(dR / c^2)
+    return real(R), real(dR)
 end
 
+oblate_radial2_arctan_even(m, n, c, dr, qstar, B, ξ) = oblate_radial2_arctan(m, n, c, dr, qstar, B, ξ)
+
 function oblate_radial2_arctan_even(m, n, c, λ, dr, ξ)
-    qstar, B = oblate_radial2_arctan_even_data(m, n, c, λ, dr)
-    return oblate_radial2_arctan_even(m, n, c, dr, qstar, B, ξ)
+    qstar, B = oblate_radial2_arctan_data(m, n, c, λ, dr)
+    return oblate_radial2_arctan(m, n, c, dr, qstar, B, ξ)
 end
 
 function use_oblate_radial2_arctan(m, n, c, ξ)
-    return iseven(m) && iseven(n - m) && c / (n + 1) <= 1.5 && ξ <= 0.25
+    return c / (n + 1) <= 1.5 && ξ <= 0.25
 end
 
-function spheroidal_rad_2(m, n, c, λ, dr, ξ)
-    if !isreal(c) && !isreal(ξ)
-        c_oblate = abs(im * c)
-        ξ_oblate = abs(im * ξ)
-        if use_oblate_radial2_arctan(m, n, c_oblate, ξ_oblate)
-            R, dR = oblate_radial2_arctan_even(m, n, c_oblate, λ, dr, ξ_oblate)
-            isfinite(R) && isfinite(dR) && return R, dR
-        end
-        return spheroidal_rad_2(m, n, c, dr, ξ)
-    end
+valid_radial_pair(R, dR) = isfinite(R) && isfinite(dR)
 
+function prolate_radial2_selected(m, n, c, λ, dr, ξ)
     use_prolate_radial2_legendreQ(m, n, c, ξ) || return spheroidal_rad_2(m, n, c, dr, ξ)
-    R, dR, converged = prolate_radial2_legendreQ(m, n, c, λ, dr, ξ)
-    return isfinite(R) && isfinite(dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
+    R, dR, _converged = prolate_radial2_legendreQ(m, n, c, λ, dr, ξ)
+    return valid_radial_pair(R, dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
 end
 
-function spheroidal_rad_2(m, n, c, λ, dr, ξs::AbstractArray)
-    if !isreal(c)
-        values = Vector{Tuple{Float64, Float64}}(undef, length(ξs))
-        c_oblate = abs(im * c)
-        ξs_oblate = abs.(im .* ξs)
-        use_special = any(ξ -> use_oblate_radial2_arctan(m, n, c_oblate, ξ), ξs_oblate)
-        qstar, B = use_special ? oblate_radial2_arctan_even_data(m, n, c_oblate, λ, dr) : (0.0 + 0.0im, ComplexF64[])
-
-        for (i, ξ) in enumerate(ξs)
-            ξ_oblate = abs(im * ξ)
-            if use_oblate_radial2_arctan(m, n, c_oblate, ξ_oblate)
-                R, dR = oblate_radial2_arctan_even(m, n, c_oblate, dr, qstar, B, ξ_oblate)
-                values[i] = isfinite(R) && isfinite(dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
-            else
-                values[i] = spheroidal_rad_2(m, n, c, dr, ξ)
-            end
-        end
-        return reshape(values, axes(ξs))
-    end
-
+function prolate_radial2_selected(m, n, c, λ, dr, ξs::AbstractArray)
     values = Vector{Tuple{Float64, Float64}}(undef, length(ξs))
     use_special = any(ξ -> use_prolate_radial2_legendreQ(m, n, c, ξ), ξs)
     dr_negative = use_special ? compute_dr_negative(m, n, c, λ, dr) : zeros(0)
@@ -374,12 +450,52 @@ function spheroidal_rad_2(m, n, c, λ, dr, ξs::AbstractArray)
 
     for (i, ξ) in enumerate(ξs)
         if use_prolate_radial2_legendreQ(m, n, c, ξ)
-            R, dR, converged = prolate_radial2_legendreQ(m, n, c, dr, dr_negative, dr_regularized, ξ)
-            values[i] = isfinite(R) && isfinite(dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
+            R, dR, _converged = prolate_radial2_legendreQ(m, n, c, dr, dr_negative, dr_regularized, ξ)
+            values[i] = valid_radial_pair(R, dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
         else
             values[i] = spheroidal_rad_2(m, n, c, dr, ξ)
         end
     end
 
     return reshape(values, axes(ξs))
+end
+
+function oblate_radial2_selected(m, n, c, λ, dr, ξ)
+    c_oblate = abs(im * c)
+    ξ_oblate = abs(im * ξ)
+    if use_oblate_radial2_arctan(m, n, c_oblate, ξ_oblate)
+        R, dR = oblate_radial2_arctan_even(m, n, c_oblate, λ, dr, ξ_oblate)
+        valid_radial_pair(R, dR) && return R, dR
+    end
+
+    return spheroidal_rad_2(m, n, c, dr, ξ)
+end
+
+function oblate_radial2_selected(m, n, c, λ, dr, ξs::AbstractArray)
+    values = Vector{Tuple{Float64, Float64}}(undef, length(ξs))
+    c_oblate = abs(im * c)
+    ξs_oblate = abs.(im .* ξs)
+    use_special = any(ξ -> use_oblate_radial2_arctan(m, n, c_oblate, ξ), ξs_oblate)
+    qstar, B = use_special ? oblate_radial2_arctan_even_data(m, n, c_oblate, λ, dr) : (0.0 + 0.0im, ComplexF64[])
+
+    for (i, ξ) in enumerate(ξs)
+        ξ_oblate = ξs_oblate[i]
+        if use_oblate_radial2_arctan(m, n, c_oblate, ξ_oblate)
+            R, dR = oblate_radial2_arctan_even(m, n, c_oblate, dr, qstar, B, ξ_oblate)
+            values[i] = valid_radial_pair(R, dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
+        else
+            values[i] = spheroidal_rad_2(m, n, c, dr, ξ)
+        end
+    end
+
+    return reshape(values, axes(ξs))
+end
+
+function spheroidal_rad_2(m, n, c, λ, dr, ξ)
+    is_oblate = !isreal(c) && !isreal(ξ)
+    return is_oblate ? oblate_radial2_selected(m, n, c, λ, dr, ξ) : prolate_radial2_selected(m, n, c, λ, dr, ξ)
+end
+
+function spheroidal_rad_2(m, n, c, λ, dr, ξs::AbstractArray)
+    return !isreal(c) ? oblate_radial2_selected(m, n, c, λ, dr, ξs) : prolate_radial2_selected(m, n, c, λ, dr, ξs)
 end
