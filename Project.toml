@@ -1,6 +1,6 @@
 name = "SpheroidalWaveFunctions"
 uuid = "02c85723-9d49-4e80-ba06-d2f5c9d5147a"
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 Bessels = "0e736298-9ec6-45e8-9647-e4fc86a2fe38"
