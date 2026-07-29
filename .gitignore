@@ -4,3 +4,4 @@ docs/Manifest*
 Manifest*.toml
 test/radial*
 *.pdf
+regress*

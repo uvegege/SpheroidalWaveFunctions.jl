@@ -163,6 +163,8 @@ end
     end
 end
 
+#include("regression_radial2.jl")
+
 @testset "Angular functions: public API, parity and ODE residual" begin
     xs = (-0.72, -0.35, 0.2, 0.65)
     cases = ((0, 0, 0.7), (1, 2, 1.1), (2, 4, 1.7))
