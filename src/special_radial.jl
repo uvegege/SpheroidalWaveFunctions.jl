@@ -254,7 +254,7 @@ function compute_oblate_qstar(m, n, c, k1, c2k)
     odd = isodd(n - m)
 
     for r in 0:m
-        top = odd ? 2*m - 2r + 1 : 2*m - 2r
+        top = odd ? 2*m - 2*r + 1 : 2*m - 2*r
         value += alpha[r+1] * product_to(top) / (product_to(r) * (2.0^(m - r) * product_to(m - r))^2)
     end
 
@@ -289,11 +289,11 @@ compute_oblate_h2r_even(m, c, qstar, k1, c2k, r) = compute_oblate_h2r(m, m, c, q
 
 function oblate_B_recurrence_terms(m, n, c, λ, qstar, k1, c2k, r)
     if iseven(n - m)
-        α = (2r + 2) * (2r + 3)
-        β = (2r + 1) * (2r - 2*m + 2) + m * (m - 1) - λ
+        α = (2*r + 2) * (2*r + 3)
+        β = (2*r + 1) * (2*r - 2*m + 2) + m * (m - 1) - λ
     else
-        α = (2r + 1) * (2r + 2)
-        β = 2r * (2r - 2*m + 1) + m * (m - 1) - λ
+        α = (2*r + 1) * (2*r + 2)
+        β = 2*r * (2*r - 2*m + 1) + m * (m - 1) - λ
     end
     γ = c^2
     h = compute_oblate_h2r(m, n, c, qstar, k1, c2k, r)
@@ -438,7 +438,7 @@ valid_radial_pair(R, dR) = isfinite(R) && isfinite(dR)
 
 function prolate_radial2_selected(m, n, c, λ, dr, ξ)
     use_prolate_radial2_legendreQ(m, n, c, ξ) || return spheroidal_rad_2(m, n, c, dr, ξ)
-    R, dR, _converged = prolate_radial2_legendreQ(m, n, c, λ, dr, ξ)
+    R, dR, _ = prolate_radial2_legendreQ(m, n, c, λ, dr, ξ)
     return valid_radial_pair(R, dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
 end
 
@@ -450,7 +450,7 @@ function prolate_radial2_selected(m, n, c, λ, dr, ξs::AbstractArray)
 
     for (i, ξ) in enumerate(ξs)
         if use_prolate_radial2_legendreQ(m, n, c, ξ)
-            R, dR, _converged = prolate_radial2_legendreQ(m, n, c, dr, dr_negative, dr_regularized, ξ)
+            R, dR, _ = prolate_radial2_legendreQ(m, n, c, dr, dr_negative, dr_regularized, ξ)
             values[i] = valid_radial_pair(R, dR) ? (R, dR) : spheroidal_rad_2(m, n, c, dr, ξ)
         else
             values[i] = spheroidal_rad_2(m, n, c, dr, ξ)
